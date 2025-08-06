@@ -1,5 +1,5 @@
 import { Flatfile, FlatfileClient } from '@flatfile/api'
-import type { FlatfileListener } from '@flatfile/listener'
+import type { FlatfileEvent, FlatfileListener } from '@flatfile/listener'
 import { createAllRecords, slugify } from '@flatfile/util-common'
 import { getFileBuffer } from '@flatfile/util-file-buffer'
 
@@ -12,7 +12,8 @@ export const Extractor = (
   extractorType: string,
   parseBuffer: (
     buffer: Buffer,
-    options: any
+    options: any,
+    event?: FlatfileEvent
   ) => WorkbookCapture | Promise<WorkbookCapture>,
   options?: Record<string, any>
 ) => {
@@ -80,7 +81,7 @@ export const Extractor = (
             ...options,
             fileId,
             headerSelectionEnabled,
-          })
+          }, event)
 
           await tick(5, 'Creating workbook')
           const workbook = await createWorkbook(
